@@ -5,12 +5,13 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtSecret = []byte("tripi-tropa")
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 func UserIDFromToken(r *http.Request) (int, error) {
 	authHeader := r.Header.Get("Authorization")
@@ -21,7 +22,7 @@ func UserIDFromToken(r *http.Request) (int, error) {
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+		return jwtKey, nil
 	})
 
 	if err != nil || !token.Valid {
